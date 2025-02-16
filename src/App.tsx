@@ -331,7 +331,7 @@ function App() {
             </div>
           </div>
         ) : (
-          <p className="font-mono text-amber-500">Ingen skattesats vald</p>
+          <p className="font-mono text-amber-500">Ingen kommun vald</p>
         )}
       </div>
       {/* Summering Section */}
