@@ -256,13 +256,13 @@ function App() {
         <div className="flex-grow space-y-4">
           <h2 className="text-2xl font-bold text-gray-50 mb-4">Pension</h2>
           <div className="flex justify-between">
-            <span className="text-gray-200">Allmän pension:</span>
+            <span className="text-gray-200">Tjänstepension (4.5%):</span>
             <span className="font-mono text-gray-200">{formatCurrency(
               Math.min(baseSalary, 50375) * 0.045
             )}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-200">Tjänstepension:</span>
+            <span className="text-gray-200">Tjänstepension (30%):</span>
             <span className="font-mono text-gray-200">{formatCurrency(
               baseSalary > 50375 ? (baseSalary - 50375) * 0.30 : 0
             )}</span>
