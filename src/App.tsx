@@ -100,7 +100,7 @@ function App() {
 
   return (
     <>
-      <img src="src/images/conscia.svg" alt="Conscia" className="mt-2 mr-4 ml-auto block"/>
+      <img src="https://raw.githubusercontent.com/hardrockhodl/salary/b5dd8313e15eea5473e4c805db21a9f6a9336047/src/images/conscia.svg" alt="Conscia" className="mt-2 mr-4 ml-auto block"/>
         <h1 className="text-xl font-bold text-[#238DD8] mt-0 mr-4 mb-4 gap-4 text-end">
           {/* <DollarSign className="w-8 h-8 text-gray-900" /> */}
           Salary Calculator
