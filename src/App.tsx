@@ -250,7 +250,7 @@ function App() {
 
       <div className="mt-2 ml-4 mr-4 grid grid-cols-1 md:grid-cols-3 gap-2">
       {/* Pension Section */}
-      <div className="bg-[#033258] p-4 rounded-lg shadow-lg flex flex-col h-[250px]">
+      <div className="bg-[#033258] p-4 rounded-lg shadow-lg flex flex-col">
         {/* Pension Info */}
         <div className="flex-grow space-y-1">
           <h2 className="text-lg font-bold text-gray-50 mb-4">Pension</h2>
