@@ -24,10 +24,10 @@ function App() {
     billableHours: 1,
   });
   const [commissionRates, setCommissionRates] = useState({
-    rate101: 100,
-    rate120: 150,
-    rate160: 200,
-    rate200: 300,
+    rate101: 10,
+    rate120: 15,
+    rate160: 20,
+    rate200: 25,
   });
   const [selectedKommun, setSelectedKommun] = useState("");
   const [showCommissionRates, setShowCommissionRates] = useState(false);
