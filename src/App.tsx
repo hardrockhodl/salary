@@ -42,30 +42,27 @@ function App() {
       ))
     : [];
 
-    const calculateCommission = (): number => {
-      const hours = income.billableHours;
-      if (hours <= 100) return 0;
+    const calculateCommission = (hours: number, commissionRates: { [key: string]: number }): number => {
+      // No commission for 99 hours or less
+      if (hours <= 99) return 0;
     
       let commission = 0;
     
-      // 200+ timmar
-      if (hours > 200) {
-        commission += (hours - 200) * commissionRates.rate200;
+      // Calculate commission incrementally
+      if (hours >= 200) {
+        commission += (hours - 199) * commissionRates.rate200;
+        hours = 199;
       }
-    
-      // 160-199 timmar
-      if (hours > 160) {
-        commission += (Math.min(hours, 200) - 160) * commissionRates.rate160;
+      if (hours >= 160) {
+        commission += (hours - 159) * commissionRates.rate160;
+        hours = 159;
       }
-    
-      // 120-159 timmar
-      if (hours > 120) {
-        commission += (Math.min(hours, 160) - 120) * commissionRates.rate120;
+      if (hours >= 120) {
+        commission += (hours - 119) * commissionRates.rate120;
+        hours = 119;
       }
-    
-      // 101-119 timmar
-      if (hours > 100) {
-        commission += (Math.min(hours, 120) - 100) * commissionRates.rate101;
+      if (hours >= 100) {
+        commission += (hours - 99) * commissionRates.rate101;
       }
     
       return commission;
@@ -74,7 +71,7 @@ function App() {
   const calculateGrossSalary = () => {
     const onCallTotal = income.onCallDays * income.onCallRate;
     const appointmentsTotal = income.appointments * income.appointmentRate;
-    const commissionTotal = calculateCommission();
+    const commissionTotal = calculateCommission(income.billableHours, commissionRates);
     return baseSalary + onCallTotal + appointmentsTotal + commissionTotal;
   };
 
@@ -96,7 +93,7 @@ function App() {
   const [expenseAmount, setExpenseAmount] = useState(0);
   const [includeCommissionInPension, setIncludeCommissionInPension] = useState(false);
 
-  const commissionTotal = calculateCommission();
+  const commissionTotal = calculateCommission(income.billableHours, commissionRates);
   const totalPension = Math.min(baseSalary + (includeCommissionInPension ? commissionTotal : 0), 50375) * 0.045 
   + (baseSalary + (includeCommissionInPension ? commissionTotal : 0) > 50375 
      ? (baseSalary + (includeCommissionInPension ? commissionTotal : 0) - 50375) * 0.30 
@@ -446,7 +443,7 @@ function App() {
           <div className="flex text-sm justify-between">
             <span className="text-gray-200">Provision:</span>
             <span className="font-mono text-gray-200">{formatCurrency(
-              income.billableHours > 100 ? calculateCommission() : 0
+              income.billableHours > 99 ? calculateCommission(income.billableHours, commissionRates) : 0
             )}</span>
           </div>
           <div className="flex justify-between text-base font-semibold">
