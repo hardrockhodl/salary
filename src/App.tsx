@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, Calendar, Clock, Table, Wallet, HandCoins } from 'lucide-react';
+import { Phone, Calendar, Clock, Table, Wallet, HandCoins, ChevronDown, ChevronUp } from 'lucide-react';
 import skattesatser from './data/skattesatser-kommuner-2025.json';
 import './index.css';
 
@@ -23,13 +23,14 @@ function App() {
     appointmentRate: 2520,
     billableHours: 1,
   });
-  const [commissionRates] = useState({
+  const [commissionRates, setCommissionRates] = useState({
     rate101: 100,
     rate120: 150,
     rate160: 200,
     rate200: 300,
   });
   const [selectedKommun, setSelectedKommun] = useState("");
+  const [showCommissionRates, setShowCommissionRates] = useState(false);
   const [isChurchMember, setIsChurchMember] = useState(false);
   const [selectedFörsamling, setSelectedFörsamling] = useState("");
 
@@ -41,19 +42,34 @@ function App() {
       ))
     : [];
 
-  const calculateCommissionRate = (hours: number) => {
-    if (hours >= 200) return commissionRates.rate200;
-    if (hours >= 160) return commissionRates.rate160;
-    if (hours >= 120) return commissionRates.rate120;
-    if (hours >= 101) return commissionRates.rate101;
-    return 0;
-  };
-
-  const calculateCommission = () => {
-    if (income.billableHours <= 100) return 0;
-    const rate = calculateCommissionRate(income.billableHours);
-    return (income.billableHours - 100) * rate;
-  };
+    const calculateCommission = (): number => {
+      const hours = income.billableHours;
+      if (hours <= 100) return 0;
+    
+      let commission = 0;
+    
+      // 200+ timmar
+      if (hours > 200) {
+        commission += (hours - 200) * commissionRates.rate200;
+      }
+    
+      // 160-199 timmar
+      if (hours > 160) {
+        commission += (Math.min(hours, 200) - 160) * commissionRates.rate160;
+      }
+    
+      // 120-159 timmar
+      if (hours > 120) {
+        commission += (Math.min(hours, 160) - 120) * commissionRates.rate120;
+      }
+    
+      // 101-119 timmar
+      if (hours > 100) {
+        commission += (Math.min(hours, 120) - 100) * commissionRates.rate101;
+      }
+    
+      return commission;
+    };
 
   const calculateGrossSalary = () => {
     const onCallTotal = income.onCallDays * income.onCallRate;
@@ -180,9 +196,86 @@ function App() {
               setIncome({ ...income, billableHours: Number(e.target.value) })
             }
             placeholder="Ange timmar..."
+            className="mt-2 text-sm block w-full rounded-md shadow-sm outline-none focus-within:outline-3 focus-within:outline-[#FF9655] font-mono"
+          />
+          <button
+            onClick={() => setShowCommissionRates(!showCommissionRates)}
+            className="mt-2 flex items-center gap-1 text-sm text-[#F3F4F6] font-medium transition-all duration-200 ease-in-out hover:text-[#1C1C1E] hover:underline-animation"
+          >
+            {showCommissionRates ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showCommissionRates ? 'Hide' : 'Edit'} Provision Rates
+          </button>
+          {showCommissionRates && (
+            <div className="mt-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-50">101-119h:</label>
+                  <input
+                    type="number"
+                    value={commissionRates.rate101}
+                    onChange={(e) =>
+                      setCommissionRates({ ...commissionRates, rate101: Number(e.target.value) })
+                    }
+                    className="text-sm block w-1/6 rounded-md shadow-sm outline-none focus-within:outline-3 focus-within:outline-[#FF9655] font-mono"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-50">120-159h:</label>
+                  <input
+                    type="number"
+                    value={commissionRates.rate120}
+                    onChange={(e) =>
+                      setCommissionRates({ ...commissionRates, rate120: Number(e.target.value) })
+                    }
+                    className="text-sm block w-1/6 rounded-md shadow-sm outline-none focus-within:outline-3 focus-within:outline-[#FF9655] font-mono"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-50">160-199h:</label>
+                  <input
+                    type="number"
+                    value={commissionRates.rate160}
+                    onChange={(e) =>
+                      setCommissionRates({ ...commissionRates, rate160: Number(e.target.value) })
+                    }
+                    className="text-sm block w-1/6 rounded-md shadow-sm outline-none focus-within:outline-3 focus-within:outline-[#FF9655] font-mono"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-right text-sm text-gray-50">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;200h+:</label>
+                  <input
+                    type="number"
+                    value={commissionRates.rate200}
+                    onChange={(e) =>
+                      setCommissionRates({ ...commissionRates, rate200: Number(e.target.value) })
+                    }
+                    className="text-sm block w-1/6 rounded-md shadow-sm outline-none focus-within:outline-3 focus-within:outline-[#FF9655] font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+
+        {/* <div className="p-4 bg-[#238DD8] rounded-xl shadow-sm">
+          <h2 className="text-base font-semibold text-[#F3F4F6] mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-[#F3F4F6]" />
+            Debiterbara timmar
+          </h2>
+          <input
+            type="number"
+            value={income.billableHours}
+            onChange={(e) =>
+              setIncome({ ...income, billableHours: Number(e.target.value) })
+            }
+            placeholder="Ange timmar..."
             className="mt-2 text-sm  block w-full rounded-md shadow-sm outline-none focus-within:outline-3 focus-within:outline-[#FF9655] font-mono"
           />
-        </div>
+        </div> */}
+        
+        
+        
         <div className="p-4 bg-[#238DD8] rounded-xl shadow-sm">
           <h2 className="text-base font-semibold text-[#F3F4F6] mb-4 flex items-center gap-2">
             <Phone className="w-5 h-5 text-[#F3F4F6]" />
@@ -353,7 +446,7 @@ function App() {
           <div className="flex text-sm justify-between">
             <span className="text-gray-200">Provision:</span>
             <span className="font-mono text-gray-200">{formatCurrency(
-              income.billableHours > 100 ? (income.billableHours - 100) * calculateCommissionRate(income.billableHours) : 0
+              income.billableHours > 100 ? calculateCommission() : 0
             )}</span>
           </div>
           <div className="flex justify-between text-base font-semibold">
